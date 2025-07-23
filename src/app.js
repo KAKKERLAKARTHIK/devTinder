@@ -20,6 +20,11 @@ app.use(express.json());
 //         res.status(404).send('User not found');
 //     }
 // });
+// in multiple route handles we can call as many functions we want when ever weere send
+//  a response  the connection will close and still were trying to send another response 
+// it will trhough error wioth using the next function we can call the rthe next function
+// untiol iunless we call next funtion it wont excute next callback fucntion like this we can handle the 
+// multiple route handlers 
 
 app.use('/user',(req, res,next) => {
      next();
