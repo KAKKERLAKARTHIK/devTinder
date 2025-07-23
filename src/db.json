@@ -1,0 +1,22 @@
+[
+  {
+    "firstName": "abcc",
+    "lastName": "Kumar",
+    "age": 22,
+    "gender": "male",
+    "address": "Chennai",
+    "state": "telengana",
+    "country": "India",
+    "userId": 1
+  },
+  {
+    "firstName": "abc",
+    "lastName": "Kumar",
+    "age": 22,
+    "gender": "male",
+    "address": "Chennai",
+    "state": "telengana",
+    "country": "India",
+    "userId": 2
+  }
+]
