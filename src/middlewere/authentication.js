@@ -9,7 +9,7 @@ const adminAuthentication = (req, res, next) => {
 }
 const userAuthentication = (req, res, next) => {
     const token = req.headers.authorization;
-    console.log("user authentication called");
+    console.log("user authentication called",token);
     if (token === "karthik") {
         next();
     } else {
@@ -17,6 +17,6 @@ const userAuthentication = (req, res, next) => {
     }
 }
 module.exports = {
-    adminAuthentication,
+    // adminAuthentication,
     userAuthentication
 };

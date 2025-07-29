@@ -4,15 +4,16 @@
   "description": "Dev tinder",
   "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js"
   },
   "author": "Karthik",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "local-storage": "^2.0.0",
-    "mongoose": "^8.16.4"
+    "mongoose": "^8.16.4",
+    "validator": "^13.15.15"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
