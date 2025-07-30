@@ -7,9 +7,11 @@ const { signupValidations, loginValidations } = require('./utils/validations')
 const bycrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken')
+
+
 //middlewares handler
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 require('dotenv').config({ path: __dirname + '/.env' });
 
 //get user
@@ -18,6 +20,7 @@ app.get('/user/getUser', async (req, res) => {
    let user = await User.findOne({ "emailId": userEmailId })
    res.send(user)
 })
+ 
 // get all data
 app.get('/user/feed', async (req, res) => {
    await User.find().then((result) => {
@@ -26,6 +29,7 @@ app.get('/user/feed', async (req, res) => {
       res.status(500).json(err);
    })
 })
+
 //create new user
 app.post('/user/createUser', async (req, res) => {
    const user = req.body;
@@ -39,6 +43,7 @@ app.post('/user/createUser', async (req, res) => {
       res.status(500).send(err?.message || "Something went wrong");
    }
 });
+
 //login api
 app.post('/user/login', async (req, res) => {
    try {
@@ -49,20 +54,17 @@ app.post('/user/login', async (req, res) => {
       }
       loginValidations(result, user)
       const isPassWordMatch = await result.validatePassword(user?.password)
-      console.log(isPassWordMatch)
       if (!isPassWordMatch) {
          throw new Error('Invalid Credentials')
       }
-
       const token = await result?.JWTtoken()
-     
       res.cookie('token', token)
       res.send('login successfully')
-
    } catch (err) {
       res.status(500).send(err?.message || "Something went wrong");
    }
 })
+
 // delete user
 app.delete('/user/deleteUser', async (req, res) => {
    try {
@@ -72,7 +74,8 @@ app.delete('/user/deleteUser', async (req, res) => {
    } catch (err) {
       res.status(500).send("Something went wrong!");
    }
-});
+})
+
 //update user
 app.patch("/user/updateUser", async (req, res) => {
    try {
@@ -90,6 +93,7 @@ app.patch("/user/updateUser", async (req, res) => {
       res.status(500).send(`"Something went wrong!"${err}`);
    }
 })
+
 // get user profile
 app.get('/profile', userAuthentication, async (req, res) => {
    try {
@@ -101,6 +105,7 @@ app.get('/profile', userAuthentication, async (req, res) => {
    }
 
 })
+
 connectDatabase().then(() => {
    console.log("Database connected");
    app.listen(3000, () => console.log('Listening on port 3000'));

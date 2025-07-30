@@ -79,7 +79,6 @@ userScheema.methods.JWTtoken = async function () {
     const user = this
     let token = await jwt.sign({ id: user?._id }, process.env.SECRET_KEY)
     return token
-
 }
 userScheema.methods.validatePassword = async function (userEnteredPassword) {
     const user = this
