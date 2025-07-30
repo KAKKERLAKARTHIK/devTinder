@@ -1,16 +1,17 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
-app.use(express.json());
 const connectDatabase = require('./config/database');
 const User = require('./models/user');
 const { userAuthentication } = require('./middlewere/authentication');
 const { signupValidations, loginValidations } = require('./utils/validations')
 const bycrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken')
+//middlewares handler
+app.use(express.json());
+app.use(cookieParser())
+require('dotenv').config({ path: __dirname + '/.env' });
 
-
-
-app.use(userAuthentication)
 //get user
 app.get('/user/getUser', async (req, res) => {
    const userEmailId = req.body.emailId
@@ -38,25 +39,27 @@ app.post('/user/createUser', async (req, res) => {
       res.status(500).send(err?.message || "Something went wrong");
    }
 });
+//login api
 app.post('/user/login', async (req, res) => {
    try {
-      const user = req.body;
-      const result = await User.findOne({ "emailId": user?.emailId });
-      console.log(result)
+      let user = req.body;
+      let result = await User.findOne({ "emailId": user?.emailId });
       if (!result) {
-         throw new Error('user not found')
-      }
-      console.log(result?.password, user.password)
-      const isMatch = await bycrypt.compare( user.password,result?.password);
-      if (!isMatch) {
-         throw new Error('invalid credntials');
+         throw new Error('User not found')
       }
       loginValidations(result, user)
-      res.send(result);
+      const isPassWordMatch = await result.validatePassword(user?.password)
+      console.log(isPassWordMatch)
+      if (!isPassWordMatch) {
+         throw new Error('Invalid Credentials')
+      }
 
+      const token = await result?.JWTtoken()
+     
+      res.cookie('token', token)
+      res.send('login successfully')
 
    } catch (err) {
-
       res.status(500).send(err?.message || "Something went wrong");
    }
 })
@@ -86,6 +89,17 @@ app.patch("/user/updateUser", async (req, res) => {
    } catch (err) {
       res.status(500).send(`"Something went wrong!"${err}`);
    }
+})
+// get user profile
+app.get('/profile', userAuthentication, async (req, res) => {
+   try {
+      let result = req.user
+      res.send(result)
+
+   } catch (err) {
+      res.status(500).send(`"Something went wrong!"${err}`);
+   }
+
 })
 connectDatabase().then(() => {
    console.log("Database connected");

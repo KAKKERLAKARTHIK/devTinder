@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validatior = require('validator');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const userScheema = mongoose.Schema({
     firstName: {
         type: String,
@@ -37,7 +39,7 @@ const userScheema = mongoose.Schema({
                 throw new Error('Password length should be contain at least one uppercase letter, one lowercase letter, one number and one special character')
             }
         },
-        minLength:[8,'Password length should be at least 8 characters']
+        minLength: [8, 'Password length should be at least 8 characters']
     },
     gender: {
         type: String,
@@ -72,6 +74,19 @@ const userScheema = mongoose.Schema({
             return true
         }
     }
-},{timestamps:true})
+}, { timestamps: true })
+userScheema.methods.JWTtoken = async function () {
+    const user = this
+    let token = await jwt.sign({ id: user?._id }, process.env.SECRET_KEY)
+    return token
+
+}
+userScheema.methods.validatePassword = async function (userEnteredPassword) {
+    const user = this
+    const hashedPassword = user.password
+    const isPasswordValid =await bcrypt.compare(userEnteredPassword, hashedPassword)
+    console.log(isPasswordValid,'ispassword')
+    return isPasswordValid
+}
 const User = mongoose.model('user', userScheema)
 module.exports = User
