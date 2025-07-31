@@ -3,108 +3,19 @@ const app = express();
 const connectDatabase = require('./config/database');
 const User = require('./models/user');
 const { userAuthentication } = require('./middlewere/authentication');
-const { signupValidations, loginValidations } = require('./utils/validations')
-const bycrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken')
-
+const authRouter = require('./routes/auth')
+const profileRouter = require('./routes/profile')
+require('dotenv').config({ path: __dirname + '/.env' });
 
 //middlewares handler
 app.use(express.json());
-app.use(cookieParser());
-require('dotenv').config({ path: __dirname + '/.env' });
+app.use(cookieParser())
 
-//get user
-app.get('/user/getUser', async (req, res) => {
-   const userEmailId = req.body.emailId
-   let user = await User.findOne({ "emailId": userEmailId })
-   res.send(user)
-})
- 
-// get all data
-app.get('/user/feed', async (req, res) => {
-   await User.find().then((result) => {
-      res.status(200).json(result);
-   }).catch((err) => {
-      res.status(500).json(err);
-   })
-})
-
-//create new user
-app.post('/user/createUser', async (req, res) => {
-   const user = req.body;
-   try {
-      signupValidations(req)
-      const encrypted = await bycrypt.hash(user?.password, 10);
-      user.password = encrypted;
-      const result = await User.create(user);
-      res.send(result);
-   } catch (err) {
-      res.status(500).send(err?.message || "Something went wrong");
-   }
-});
-
-//login api
-app.post('/user/login', async (req, res) => {
-   try {
-      let user = req.body;
-      let result = await User.findOne({ "emailId": user?.emailId });
-      if (!result) {
-         throw new Error('User not found')
-      }
-      loginValidations(result, user)
-      const isPassWordMatch = await result.validatePassword(user?.password)
-      if (!isPassWordMatch) {
-         throw new Error('Invalid Credentials')
-      }
-      const token = await result?.JWTtoken()
-      res.cookie('token', token)
-      res.send('login successfully')
-   } catch (err) {
-      res.status(500).send(err?.message || "Something went wrong");
-   }
-})
-
-// delete user
-app.delete('/user/deleteUser', async (req, res) => {
-   try {
-      const user = req.body;
-      const deleteUser = await User.findByIdAndDelete(user?.userId)
-      res.send(deleteUser)
-   } catch (err) {
-      res.status(500).send("Something went wrong!");
-   }
-})
-
-//update user
-app.patch("/user/updateUser", async (req, res) => {
-   try {
-      const user = req.body;
-
-      const allowedFields = ['firstName', 'lastName', 'age', 'userId', 'address', 'mobileNumber', 'password', 'gender', 'skills', 'avatarUrl']
-      Object.keys(user).forEach(key => {
-         if (!allowedFields.includes(key)) {
-            res.status(400).send("were not allowing to update this field  " + key)
-         }
-      })
-      const updateUser = await User.findByIdAndUpdate(user?.userId, user, { returnDocument: 'before', runValidators: true, Strict: true })
-      res.send(updateUser)
-   } catch (err) {
-      res.status(500).send(`"Something went wrong!"${err}`);
-   }
-})
-
-// get user profile
-app.get('/profile', userAuthentication, async (req, res) => {
-   try {
-      let result = req.user
-      res.send(result)
-
-   } catch (err) {
-      res.status(500).send(`"Something went wrong!"${err}`);
-   }
-
-})
+// authentication routing
+app.use("/auth",authRouter)
+//profile routing
+app.use("/profile",userAuthentication,profileRouter)
 
 connectDatabase().then(() => {
    console.log("Database connected");

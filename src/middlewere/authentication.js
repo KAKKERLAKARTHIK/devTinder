@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const user = require('../models/user')
+const User = require('../models/user')
 
 const adminAuthentication = (req, res, next) => {
 
@@ -19,12 +19,12 @@ const userAuthentication = async (req, res, next) => {
             throw new Error('Invalid Token')
         }
         let result = jwt.verify(token, process.env.SECRET_KEY)
-        console.log(process.env.SECRET_KEY, result)
         if (!result) {
             throw new Error('Invalid Token')
         }
         const { id } = result || {}
-        const userData = await user.findById(id)
+        const userData = await User.findById(id)
+        req.user = userData
         if (!userData) {
             throw new Error('User not found')
         }

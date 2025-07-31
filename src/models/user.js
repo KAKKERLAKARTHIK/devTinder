@@ -75,16 +75,16 @@ const userScheema = mongoose.Schema({
         }
     }
 }, { timestamps: true })
-userScheema.methods.JWTtoken = async function () {
+userScheema.methods.JWTtoken = async function (req,res) {
     const user = this
     let token = await jwt.sign({ id: user?._id }, process.env.SECRET_KEY)
+
     return token
 }
 userScheema.methods.validatePassword = async function (userEnteredPassword) {
     const user = this
     const hashedPassword = user.password
     const isPasswordValid =await bcrypt.compare(userEnteredPassword, hashedPassword)
-    console.log(isPasswordValid,'ispassword')
     return isPasswordValid
 }
 const User = mongoose.model('user', userScheema)
