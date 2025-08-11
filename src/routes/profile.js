@@ -8,8 +8,8 @@ const validator = require('validator');
 
 profileRouter.get('/view', async (req, res) => {
     try {
-        const userData = req.body
-        const findUserData = await User.findById(userData?.id)
+        const userData = req.user
+        const findUserData = await User.findById(userData?._id)
         if (findUserData) {
             res.send(findUserData)
         } else {
