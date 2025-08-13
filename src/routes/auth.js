@@ -26,10 +26,14 @@ authRouter.post("/login", async function (req, res) {
         if (!findUser) {
             res.status(500).send("Invalid Credentials")
         }
-        loginValidations(findUser, userCred)
+        let result =await loginValidations(findUser, userCred)
+        console.log(result, "result")
+         if (result!=="success") {
+            res.status(500).send(result)
+        }
         const isPassWordMatch = await findUser?.validatePassword( userCred?.password )
         if (!isPassWordMatch) {
-            res.status(500).send("Invalid Credentials")
+            res.status(500).send("Invalid Credentials ")
         }
         const token = await findUser.JWTtoken()
         res.cookie('token', token)

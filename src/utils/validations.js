@@ -12,15 +12,19 @@ const signupValidations =(req)=>{
   
 }
 const loginValidations=async(res,req)=>{
-    
+    console.log(res?.emailId,req?.emailId)
+
     if(!req?.emailId){
-        throw new Error('email is required')
+        return 'email is required'
     }else if(!req?.password){
-        throw new Error('password is required')
+        return 'password is required'
     }else if(!validator?.isEmail(req?.emailId)){
         throw new Error('email is invalid')
     } else if(res?.emailId !== req?.emailId){
-        throw new Error('invalid credntials')
+      return   "Invalid Credentials"
+    }else{
+      return "success"
     }
+
 }
 module.exports = {signupValidations,loginValidations};

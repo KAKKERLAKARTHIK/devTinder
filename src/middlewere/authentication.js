@@ -16,17 +16,17 @@ const userAuthentication = async (req, res, next) => {
     try {
         let token = req.cookies?.token
         if (!token) {
-            throw new Error('Invalid Token')
+            return res.status(401).send('Please Login')
         }
         let result = jwt.verify(token, process.env.SECRET_KEY)
         if (!result) {
-            throw new Error('Invalid Token')
+            return res.status(401).send('Please Login')
         }
         const { id } = result || {}
         const userData = await User.findById(id)
         req.user = userData
         if (!userData) {
-            throw new Error('User not found')
+            return res.status(401).send('Please Login')
         }
         req.user = userData
         next()
