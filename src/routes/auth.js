@@ -10,9 +10,13 @@ authRouter.post("/signup", async function (req, res) {
     try {
         const signUpData = req.body
         signupValidations(req)
-        const hashPassword =await bcrypt.hash(signUpData?.password, 10)
+        const hashPassword = await bcrypt.hash(signUpData?.password, 10)
         signUpData.password = hashPassword
+        console.log(signUpData, "signUpData")
         const insertingIntoDb = await User.create(signUpData)
+
+        let token = await jwt.sign({ id: insertingIntoDb?._id }, process.env.SECRET_KEY)
+        res.cookie('token', token)
         res.send(insertingIntoDb)
     } catch (err) {
         res.status(500).send(err?.message || "something went wrong")
@@ -23,15 +27,17 @@ authRouter.post("/login", async function (req, res) {
     try {
         const userCred = req.body;
         const findUser = await User.findOne({ emailId: userCred?.emailId })
+        console.log(findUser, userCred)
         if (!findUser) {
             res.status(500).send("Invalid Credentials")
+            return
         }
-        let result =await loginValidations(findUser, userCred)
+        let result = await loginValidations(findUser, userCred)
         console.log(result, "result")
-         if (result!=="success") {
+        if (result !== "success") {
             res.status(500).send(result)
         }
-        const isPassWordMatch = await findUser?.validatePassword( userCred?.password )
+        const isPassWordMatch = await findUser?.validatePassword(userCred?.password)
         if (!isPassWordMatch) {
             res.status(500).send("Invalid Credentials ")
         }
@@ -43,7 +49,7 @@ authRouter.post("/login", async function (req, res) {
     }
 })
 
-authRouter.post("/logout",(req,res)=>{
+authRouter.post("/logout", (req, res) => {
     res.clearCookie('token', { path: '/' });
     res.send("user logout succesfully!")
 })

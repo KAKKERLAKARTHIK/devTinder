@@ -67,12 +67,16 @@ const userScheema = mongoose.Schema({
                 return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTwmfsxnhatJ6JaO3fYb6Cpe6oHEsfTV9_bg&s"
             }
         },
-        validate: (value) => {
-            if (!validatior.isURL(value)) {
-                throw new Error('url is invalid')
-            }
-            return true
-        }
+        // validate: (value) => {
+        //     if (!validatior.isURL(value)) {
+        //         throw new Error('url is invalid')
+        //     }
+        //     return true
+        // }
+    },
+    about:{
+        type:String,
+   default:"this is the defualt for user "
     }
 }, { timestamps: true })
 userScheema.methods.JWTtoken = async function (req,res) {

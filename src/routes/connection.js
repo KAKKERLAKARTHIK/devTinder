@@ -12,13 +12,14 @@ connectionRouter.get('/request', async (req, res) => {
         }).populate("fromUserId", ["firstName", "lastName", "avatarUrl"])
 
         console.log(allRequest)
-        res.send(allRequest)
+        res.json({data:allRequest})
     } catch (error) {
         res.status(500).json({
             message: error?.message || "Something went wrong!!!"
         })
     }
 })
+
 connectionRouter.get("/connections", async function (req, res) {
     try {
         const user = req?.user

@@ -22,7 +22,7 @@ feedRouter.get("/feed", async function (req, res) {
         })
         const findFeed = await User.find({
             $and: [{ _id: { $nin: Array.from(exludingThidIds) } }, { _id: { $ne: user?._id } }]
-        }).select(["firstName", "lastName", "avatarUrl", "skills", "gender", "age", "emailId"])
+        }).select(["firstName", "lastName", "avatarUrl", "skills", "gender", "age", "emailId","about"])
         res.json({
             data: findFeed
         })

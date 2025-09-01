@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
+const mongoose = require('mongoose');
 
 const adminAuthentication = (req, res, next) => {
 
@@ -11,10 +12,12 @@ const adminAuthentication = (req, res, next) => {
         res.status(401).send("unauthorized");
     }
 }
+ 
+ 
 
 const userAuthentication = async (req, res, next) => {
     try {
-        let token = req.cookies?.token
+        let token = req?.cookies?.token
         if (!token) {
             return res.status(401).send('Please Login')
         }

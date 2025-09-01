@@ -23,7 +23,7 @@ profileRouter.get('/view', async (req, res) => {
 profileRouter.patch("/edit", async (req, res) => {
     try {
         const userData = req?.body
-        const allowedFieldsToEdit = ['firstName', 'lastName', 'age', 'userId', 'address', 'mobileNumber', 'gender', 'skills', 'avatarUrl']
+        const allowedFieldsToEdit = ['firstName', 'lastName', 'age', 'userId', 'address', 'mobileNumber', 'gender', 'skills', 'avatarUrl','about',  ]
         const isAllowed = Object.keys(userData).some((key) => {
             if (!allowedFieldsToEdit.includes(key)) {
                 res.status(400).send("were not allowing to update this field  " + key)
