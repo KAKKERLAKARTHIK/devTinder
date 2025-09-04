@@ -4,7 +4,8 @@
   "description": "Dev tinder",
   "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "author": "Karthik",
   "license": "ISC",
